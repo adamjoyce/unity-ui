@@ -6,13 +6,16 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public Text[] buttonList;
+    public GameObject gameOverPanel;
+    public Text gameOverText;
 
     private string playerSide;
 
     private void Awake()
     {
-        playerSide = "X";
         setGameControllerReferenceOnButtons();
+        playerSide = "X";
+        gameOverPanel.SetActive(false);
     }
 
     // Returns which player go it is.
@@ -91,6 +94,9 @@ public class GameController : MonoBehaviour
         {
             buttonList[i].GetComponentInParent<Button>().interactable = false;
         }
+
+        gameOverText.text = playerSide + " Wins!";
+        gameOverPanel.SetActive(true);
     }
 
     // Swaps the player to the other side.
