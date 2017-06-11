@@ -10,12 +10,16 @@ public class GameController : MonoBehaviour
     public Text gameOverText;
 
     private string playerSide;
+    private int moveCount;
+    private int maxMoves;
 
     private void Awake()
     {
         setGameControllerReferenceOnButtons();
-        playerSide = "X";
         gameOverPanel.SetActive(false);
+        playerSide = "X";
+        moveCount = 0;
+        maxMoves = 9;
     }
 
     // Returns which player go it is.
@@ -75,6 +79,13 @@ public class GameController : MonoBehaviour
             gameOver();
         }
 
+        // Check for a draw.
+        moveCount++;
+        if (moveCount >= maxMoves)
+        {
+            setGameOverText("It's a draw!");
+        }
+
         changeSides();
     }
 
@@ -95,13 +106,19 @@ public class GameController : MonoBehaviour
             buttonList[i].GetComponentInParent<Button>().interactable = false;
         }
 
-        gameOverText.text = playerSide + " Wins!";
-        gameOverPanel.SetActive(true);
+        setGameOverText(playerSide + " Wins!");
     }
 
     // Swaps the player to the other side.
     private void changeSides()
     {
         playerSide = (playerSide == "X") ? "O" : "X";
+    }
+
+    // Sets the game over text and enables the game over panel.
+    private void setGameOverText(string text)
+    {
+        gameOverText.text = text;
+        gameOverPanel.SetActive(true);
     }
 }
