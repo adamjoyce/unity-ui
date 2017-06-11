@@ -3,12 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class Player
+{
+    public Image panel;
+    public Text text;
+}
+
+[System.Serializable]
+public class PlayerColor
+{
+    public Color panelColor;
+    public Color textColor;
+}
+
 public class GameController : MonoBehaviour
 {
     public Text[] buttonList;
     public GameObject gameOverPanel;
     public Text gameOverText;
     public GameObject restartButton;
+
+    public Player playerX;
+    public Player playerO;
+    public PlayerColor activePlayerColor;
+    public PlayerColor inactivePlayerColor;
 
     private string playerSide;
     private int moveCount;
@@ -20,6 +39,7 @@ public class GameController : MonoBehaviour
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
         playerSide = "X";
+        setPlayerColors(playerX, playerO);
         moveCount = 0;
         maxMoves = 9;
     }
@@ -33,68 +53,55 @@ public class GameController : MonoBehaviour
     // Ends the current player's turn.
     public void endTurn()
     {
-        // Top row.
-        if (buttonList[0].text == playerSide && buttonList[1].text == playerSide && buttonList[2].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Middle row.
-        if (buttonList[3].text == playerSide && buttonList[4].text == playerSide && buttonList[5].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Bottom row.
-        if (buttonList[6].text == playerSide && buttonList[7].text == playerSide && buttonList[8].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Left column.
-        if (buttonList[0].text == playerSide && buttonList[3].text == playerSide && buttonList[6].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Middle column,
-        if (buttonList[1].text == playerSide && buttonList[4].text == playerSide && buttonList[7].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Right column.
-        if (buttonList[2].text == playerSide && buttonList[5].text == playerSide && buttonList[8].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Top-left diagonal.
-        if (buttonList[0].text == playerSide && buttonList[4].text == playerSide && buttonList[8].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Top-right diagonal.
-        if (buttonList[2].text == playerSide && buttonList[4].text == playerSide && buttonList[6].text == playerSide)
-        {
-            gameOver(playerSide);
-        }
-
-        // Check for a draw.
         moveCount++;
-        if (moveCount >= maxMoves)
+
+        if (buttonList[0].text == playerSide && buttonList[1].text == playerSide && buttonList[2].text == playerSide)           // Top row.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[3].text == playerSide && buttonList[4].text == playerSide && buttonList[5].text == playerSide)      // Middle row.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[6].text == playerSide && buttonList[7].text == playerSide && buttonList[8].text == playerSide)      // Bottom row.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[0].text == playerSide && buttonList[3].text == playerSide && buttonList[6].text == playerSide)      // Left column.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[1].text == playerSide && buttonList[4].text == playerSide && buttonList[7].text == playerSide)      // Middle column.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[2].text == playerSide && buttonList[5].text == playerSide && buttonList[8].text == playerSide)      // Right column.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[0].text == playerSide && buttonList[4].text == playerSide && buttonList[8].text == playerSide)      // Top-left diagonal.
+        {
+            gameOver(playerSide);
+        }
+        else if (buttonList[2].text == playerSide && buttonList[4].text == playerSide && buttonList[6].text == playerSide)      // Top-right diagonal.
+        {
+            gameOver(playerSide);
+        }
+        else if (moveCount >= maxMoves)         // Check for a draw.
         {
             gameOver("draw");
         }
-
-        changeSides();
+        else
+        {
+            changeSides();
+        }
     }
 
     // Resets the game for another round.
     public void restartGame()
     {
         playerSide = "X";
+        setPlayerColors(playerX, playerO);
         moveCount = 0;
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
@@ -136,6 +143,14 @@ public class GameController : MonoBehaviour
     private void changeSides()
     {
         playerSide = (playerSide == "X") ? "O" : "X";
+        if (playerSide == "X")
+        {
+            setPlayerColors(playerX, playerO);
+        }
+        else
+        {
+            setPlayerColors(playerO, playerX);
+        }
     }
 
     // Sets the game over text and enables the game over panel.
@@ -152,5 +167,14 @@ public class GameController : MonoBehaviour
         {
             buttonList[i].GetComponentInParent<Button>().interactable = toggle;
         }
+    }
+
+    // Sets the active and inactive player colours.
+    private void setPlayerColors(Player newPlayer, Player oldPlayer)
+    {
+        newPlayer.panel.color = activePlayerColor.panelColor;
+        newPlayer.text.color = activePlayerColor.textColor;
+        oldPlayer.panel.color = inactivePlayerColor.panelColor;
+        oldPlayer.text.color = inactivePlayerColor.textColor;
     }
 }
