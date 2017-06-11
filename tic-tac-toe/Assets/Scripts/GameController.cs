@@ -8,6 +8,7 @@ public class Player
 {
     public Image panel;
     public Text text;
+    public Button button;
 }
 
 [System.Serializable]
@@ -23,6 +24,7 @@ public class GameController : MonoBehaviour
     public GameObject gameOverPanel;
     public Text gameOverText;
     public GameObject restartButton;
+    public GameObject startInfo;
 
     public Player playerX;
     public Player playerO;
@@ -38,8 +40,6 @@ public class GameController : MonoBehaviour
         setGameControllerReferenceOnButtons();
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
-        playerSide = "X";
-        setPlayerColors(playerX, playerO);
         moveCount = 0;
         maxMoves = 9;
     }
@@ -90,6 +90,7 @@ public class GameController : MonoBehaviour
         else if (moveCount >= maxMoves)         // Check for a draw.
         {
             gameOver("draw");
+            setPlayerColorsInactive();
         }
         else
         {
@@ -100,16 +101,42 @@ public class GameController : MonoBehaviour
     // Resets the game for another round.
     public void restartGame()
     {
-        playerSide = "X";
-        setPlayerColors(playerX, playerO);
         moveCount = 0;
+
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
-        setBoardInteractable(true);
         for (int i = 0; i < buttonList.Length; ++i)
         {
             buttonList[i].text = "";
         }
+
+        setPlayerColorsInactive();
+        setPlayerButtons(true);
+        startInfo.SetActive(true);
+    }
+
+    // Sets the side to begin the game.
+    public void setStartingState(string startingSide)
+    {
+        playerSide = startingSide;
+        if (startingSide == "X")
+        {
+            setPlayerColors(playerX, playerO);
+        }
+        else
+        {
+            setPlayerColors(playerO, playerX);
+        }
+
+        startGame();
+    }
+
+    // Begins the game after a starting player is chosen.
+    private void startGame()
+    {
+        startInfo.SetActive(false);
+        setBoardInteractable(true);
+        setPlayerButtons(false);
     }
 
     // Sets up the game controller reference for all button in the grid space.
@@ -176,5 +203,21 @@ public class GameController : MonoBehaviour
         newPlayer.text.color = activePlayerColor.textColor;
         oldPlayer.panel.color = inactivePlayerColor.panelColor;
         oldPlayer.text.color = inactivePlayerColor.textColor;
+    }
+
+    // Toggles the player buttons for 'first turn' selection.
+    private void setPlayerButtons(bool toggle)
+    {
+        playerX.button.interactable = toggle;
+        playerO.button.interactable = toggle;
+    }
+
+    // Sets the player selection panels to their inactive colour scheme.
+    private void setPlayerColorsInactive()
+    {
+        playerX.panel.color = inactivePlayerColor.panelColor;
+        playerX.text.color = inactivePlayerColor.textColor;
+        playerO.panel.color = inactivePlayerColor.panelColor;
+        playerO.text.color = inactivePlayerColor.textColor;
     }
 }
