@@ -11,15 +11,15 @@ public class GridSpace : MonoBehaviour
     private GameController gameController;          // The scene's game controller.
 
     // Called when the button is clicked.
-    public void setSpace()
+    public void SetSpace()
     {
-        buttonText.text = gameController.getPlayerSide();
+        buttonText.text = gameController.GetPlayerSide();
         button.interactable = false;
-        gameController.endTurn();
+        gameController.EndTurn();
     }
 
     // Sets the scene's gamecontroller for this button.
-    public void setGameController(GameController controller)
+    public void SetGameController(GameController controller)
     {
         gameController = controller;
     }

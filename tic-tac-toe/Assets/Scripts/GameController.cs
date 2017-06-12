@@ -21,8 +21,8 @@ public class PlayerColor
 public class GameController : MonoBehaviour
 {
     public Text[] buttonList;
-    public GameObject gameOverPanel;
-    public Text gameOverText;
+    public GameObject GameOverPanel;
+    public Text GameOverText;
     public GameObject restartButton;
     public GameObject startInfo;
 
@@ -37,158 +37,158 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        setGameControllerReferenceOnButtons();
-        gameOverPanel.SetActive(false);
+        SetGameControllerReferenceOnButtons();
+        GameOverPanel.SetActive(false);
         restartButton.SetActive(false);
         moveCount = 0;
         maxMoves = 9;
     }
 
     // Returns which player go it is.
-    public string getPlayerSide()
+    public string GetPlayerSide()
     {
         return playerSide;
     }
 
     // Ends the current player's turn.
-    public void endTurn()
+    public void EndTurn()
     {
         moveCount++;
 
         if (buttonList[0].text == playerSide && buttonList[1].text == playerSide && buttonList[2].text == playerSide)           // Top row.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[3].text == playerSide && buttonList[4].text == playerSide && buttonList[5].text == playerSide)      // Middle row.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[6].text == playerSide && buttonList[7].text == playerSide && buttonList[8].text == playerSide)      // Bottom row.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[0].text == playerSide && buttonList[3].text == playerSide && buttonList[6].text == playerSide)      // Left column.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[1].text == playerSide && buttonList[4].text == playerSide && buttonList[7].text == playerSide)      // Middle column.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[2].text == playerSide && buttonList[5].text == playerSide && buttonList[8].text == playerSide)      // Right column.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[0].text == playerSide && buttonList[4].text == playerSide && buttonList[8].text == playerSide)      // Top-left diagonal.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (buttonList[2].text == playerSide && buttonList[4].text == playerSide && buttonList[6].text == playerSide)      // Top-right diagonal.
         {
-            gameOver(playerSide);
+            GameOver(playerSide);
         }
         else if (moveCount >= maxMoves)         // Check for a draw.
         {
-            gameOver("draw");
-            setPlayerColorsInactive();
+            GameOver("draw");
+            SetPlayerColorsInactive();
         }
         else
         {
-            changeSides();
+            ChangeSides();
         }
     }
 
     // Resets the game for another round.
-    public void restartGame()
+    public void RestartGame()
     {
         moveCount = 0;
 
-        gameOverPanel.SetActive(false);
+        GameOverPanel.SetActive(false);
         restartButton.SetActive(false);
         for (int i = 0; i < buttonList.Length; ++i)
         {
             buttonList[i].text = "";
         }
 
-        setPlayerColorsInactive();
-        setPlayerButtons(true);
+        SetPlayerColorsInactive();
+        SetPlayerButtons(true);
         startInfo.SetActive(true);
     }
 
     // Sets the side to begin the game.
-    public void setStartingState(string startingSide)
+    public void SetStartingState(string startingSide)
     {
         playerSide = startingSide;
         if (startingSide == "X")
         {
-            setPlayerColors(playerX, playerO);
+            SetPlayerColors(playerX, playerO);
         }
         else
         {
-            setPlayerColors(playerO, playerX);
+            SetPlayerColors(playerO, playerX);
         }
 
-        startGame();
+        StartGame();
     }
 
     // Begins the game after a starting player is chosen.
-    private void startGame()
+    private void StartGame()
     {
         startInfo.SetActive(false);
-        setBoardInteractable(true);
-        setPlayerButtons(false);
+        SetBoardInteractable(true);
+        SetPlayerButtons(false);
     }
 
     // Sets up the game controller reference for all button in the grid space.
-    private void setGameControllerReferenceOnButtons()
+    private void SetGameControllerReferenceOnButtons()
     {
         for (int i = 0; i < buttonList.Length; ++i)
         {
-            buttonList[i].GetComponentInParent<GridSpace>().setGameController(this);
+            buttonList[i].GetComponentInParent<GridSpace>().SetGameController(this);
         }
     }
 
     // Deals with cleanup and ending the game.
-    private void gameOver(string winningPlayer)
+    private void GameOver(string winningPlayer)
     {
-        setBoardInteractable(false);
+        SetBoardInteractable(false);
 
         // Displays the if the game was a win or a draw.
         if (winningPlayer == "draw")
         {
-            setGameOverText("It's a draw!");
+            SetGameOverText("It's a draw!");
         }
         else
         {
-            setGameOverText(playerSide + " Wins!");
+            SetGameOverText(playerSide + " Wins!");
         }
 
         restartButton.SetActive(true);
     }
 
     // Swaps the player to the other side.
-    private void changeSides()
+    private void ChangeSides()
     {
         playerSide = (playerSide == "X") ? "O" : "X";
         if (playerSide == "X")
         {
-            setPlayerColors(playerX, playerO);
+            SetPlayerColors(playerX, playerO);
         }
         else
         {
-            setPlayerColors(playerO, playerX);
+            SetPlayerColors(playerO, playerX);
         }
     }
 
     // Sets the game over text and enables the game over panel.
-    private void setGameOverText(string text)
+    private void SetGameOverText(string text)
     {
-        gameOverText.text = text;
-        gameOverPanel.SetActive(true);
+        GameOverText.text = text;
+        GameOverPanel.SetActive(true);
     }
 
     // Toggles the board's button interactibility.
-    private void setBoardInteractable(bool toggle)
+    private void SetBoardInteractable(bool toggle)
     {
         for (int i = 0; i < buttonList.Length; ++i)
         {
@@ -197,7 +197,7 @@ public class GameController : MonoBehaviour
     }
 
     // Sets the active and inactive player colours.
-    private void setPlayerColors(Player newPlayer, Player oldPlayer)
+    private void SetPlayerColors(Player newPlayer, Player oldPlayer)
     {
         newPlayer.panel.color = activePlayerColor.panelColor;
         newPlayer.text.color = activePlayerColor.textColor;
@@ -206,14 +206,14 @@ public class GameController : MonoBehaviour
     }
 
     // Toggles the player buttons for 'first turn' selection.
-    private void setPlayerButtons(bool toggle)
+    private void SetPlayerButtons(bool toggle)
     {
         playerX.button.interactable = toggle;
         playerO.button.interactable = toggle;
     }
 
     // Sets the player selection panels to their inactive colour scheme.
-    private void setPlayerColorsInactive()
+    private void SetPlayerColorsInactive()
     {
         playerX.panel.color = inactivePlayerColor.panelColor;
         playerX.text.color = inactivePlayerColor.textColor;
