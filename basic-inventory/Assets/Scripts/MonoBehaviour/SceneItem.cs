@@ -12,7 +12,7 @@ public class SceneItem : MonoBehaviour
         // Apply any item data changes...
     }
 
-    /* Simulates picking up the item. */
+    /* Picks up this item in the scene. */
     public void PickupItem(Inventory playerInventory)
     {
         // Attempt to add the item data to your inventory.
@@ -21,9 +21,13 @@ public class SceneItem : MonoBehaviour
             // Remove scene item.
             Destroy(gameObject);
         }
-        else
-        {
-            Debug.Log("Inventory full.");
-        }
+    }
+
+    /* Generates this item to drop in the scene. */
+    public void DropItem(Inventory playerInventory, Transform dropLocation)
+    {
+        Vector3 dropPosition = new Vector3(dropLocation.position.x, dropLocation.position.y, dropLocation.position.z + 5);
+        Instantiate(itemData.sceneObject, dropPosition, Quaternion.identity);
+        playerInventory.RemoveItem(itemData);
     }
 }

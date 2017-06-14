@@ -9,6 +9,8 @@ public class Inventory : MonoBehaviour
     public Item[] items = new Item[numItemSlots];                   // The collection that stores the inventory's items.
     public const int numItemSlots = 4;                              // The maximum number of items the inventory can store.
 
+    public int selectedItemIndex = 0;                              // Index for the selected item.
+
     /* Add an item to the inventory.
      * Returns true if the item is successfully added. */
     public bool AddItem(Item itemToAdd)
@@ -37,6 +39,33 @@ public class Inventory : MonoBehaviour
                 itemImages[i].sprite = null;
                 itemImages[i].enabled = false;
                 return;
+            }
+        }
+    }
+
+    /* Changes the currently selected item. */
+    public void ChangeSelectedItem(bool increment)
+    {
+        if (increment)
+        {
+            if (selectedItemIndex < (numItemSlots - 1))
+            {
+                selectedItemIndex++;
+            }
+            else
+            {
+                selectedItemIndex = 0;
+            }
+        }
+        else
+        {
+            if (selectedItemIndex > 0)
+            {
+                selectedItemIndex--;
+            }
+            else
+            {
+                selectedItemIndex = numItemSlots - 1;
             }
         }
     }

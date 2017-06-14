@@ -32,6 +32,7 @@ public class FirstPersonController : MonoBehaviour
         Movement();
         CameraRotation();
 
+        // Picking up items.
         if (Input.GetButtonDown("Fire1"))
         {
             RaycastHit hit;
@@ -43,6 +44,29 @@ public class FirstPersonController : MonoBehaviour
                 {
                     sceneItem.PickupItem(playerInventory);
                 }
+            }
+        }
+
+        // Inventory item selection.
+        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
+        {
+            // Wheel scrolls up.
+            playerInventory.ChangeSelectedItem(false);
+            Debug.Log(playerInventory.selectedItemIndex);
+        }
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+        {
+            // Wheel scrolls down.
+            playerInventory.ChangeSelectedItem(true);
+            Debug.Log(playerInventory.selectedItemIndex);
+        }
+
+        // Dropping items.
+        if (Input.GetButtonDown("Fire2"))
+        {
+            if (playerInventory.items[playerInventory.selectedItemIndex])
+            {
+                playerInventory.items[playerInventory.selectedItemIndex].sceneObject.GetComponent<SceneItem>().DropItem(playerInventory, transform);
             }
         }
     }
