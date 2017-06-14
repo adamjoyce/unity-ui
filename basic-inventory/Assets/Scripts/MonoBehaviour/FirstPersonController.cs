@@ -7,6 +7,7 @@ public class FirstPersonController : MonoBehaviour
 {
     public float moveSpeed = 2.0f;                  // The speed at which the character will move.
     public float mouseSensitivity = 2.0f;           // The mouse sensitivity.
+    public  Inventory playerInventory;              // This player's inventory.
 
     private float moveForward;                      // Stores the input value along the forward axis (W and S).
     private float moveRight;                        // Stores the input value along the right axis (D and A).
@@ -17,30 +18,63 @@ public class FirstPersonController : MonoBehaviour
     private CharacterController controller;         // The character controller attached to this player.
     private Camera playerCamera;                    // The camera acting as the player's eyes.
 
-    // Use this for initialization.
-    void Start()
+    /* Use this for initialization. */
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update is called once per frame.
-    void Update()
+    /* Update is called once per frame. */
+    private void Update()
+    {
+        Movement();
+        CameraRotation();
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100))
+            {
+                GameObject objectHit = hit.transform.gameObject;
+                SceneItem sceneItem = objectHit.GetComponent<SceneItem>();
+                if (sceneItem)
+                {
+                    sceneItem.PickupItem(playerInventory);
+                }
+            }
+        }
+    }
+
+    /* Moves the player based on axis inputs. */
+    private void Movement()
     {
         // Get the input axis values from the player.
         moveForward = Input.GetAxis("Vertical") * moveSpeed;
         moveRight = Input.GetAxis("Horizontal") * moveSpeed;
-        rotationX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        rotationY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        // Movement.
+        // Apply Movement.
         Vector3 movement = new Vector3(moveRight, 0, moveForward);
         movement = transform.rotation * movement;
         controller.Move(movement * Time.deltaTime);
+    }
 
-        // Rotation.
+    /* Rotates the player based on mouse axis inputs. */
+    private void CameraRotation()
+    {
+        // Get the input axis from the player.
+        rotationX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        rotationY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+
+        // Apply Rotation.
         transform.Rotate(0, rotationX, 0);
         playerCamera.transform.Rotate(-rotationY, 0, 0);
+    }
+
+    /* Attempts to pickup */
+    private void PickupInteractable()
+    {
+
     }
 }
