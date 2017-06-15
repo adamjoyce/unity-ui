@@ -5,6 +5,7 @@ using UnityEngine;
 public class SceneItem : MonoBehaviour
 {
     public Item itemData;                       // The data that represents this item.
+    private float itemSpawnDistance = 3.0f;     // The distance the item will appear from the player when dropped.
 
     /* Use this for initialization. */
     void Start()
@@ -24,9 +25,9 @@ public class SceneItem : MonoBehaviour
     }
 
     /* Generates this item to drop in the scene. */
-    public void DropItem(Inventory playerInventory, Transform dropLocation)
+    public void DropItem(Inventory playerInventory, Vector3 dropLocation, Vector3 forwardVector)
     {
-        Vector3 dropPosition = new Vector3(dropLocation.position.x, dropLocation.position.y, dropLocation.position.z + 5);
+        Vector3 dropPosition = dropLocation + (new Vector3(forwardVector.x, 0, forwardVector.z) * itemSpawnDistance);
         Instantiate(itemData.sceneObject, dropPosition, Quaternion.identity);
         playerInventory.RemoveItem(itemData);
     }

@@ -5,18 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonController : MonoBehaviour
 {
+    public Inventory playerInventory;               // This player's inventory.
+
     public float moveSpeed = 2.0f;                  // The speed at which the character will move.
     public float mouseSensitivity = 2.0f;           // The mouse sensitivity.
-    public  Inventory playerInventory;              // This player's inventory.
+
+    private CharacterController controller;         // The character controller attached to this player.
+    private Camera playerCamera;                    // The camera acting as the player's eyes.
 
     private float moveForward;                      // Stores the input value along the forward axis (W and S).
     private float moveRight;                        // Stores the input value along the right axis (D and A).
 
     private float rotationX;                        // Stores the input mouse's X axis value for player rotation.
     private float rotationY;                        // Stores the input mouse's Y axis value for player rotation.
-
-    private CharacterController controller;         // The character controller attached to this player.
-    private Camera playerCamera;                    // The camera acting as the player's eyes.
 
     /* Use this for initialization. */
     private void Start()
@@ -29,46 +30,13 @@ public class FirstPersonController : MonoBehaviour
     /* Update is called once per frame. */
     private void Update()
     {
+        // Navigation.
         Movement();
         CameraRotation();
 
-        // Picking up items.
-        if (Input.GetButtonDown("Fire1"))
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100))
-            {
-                GameObject objectHit = hit.transform.gameObject;
-                SceneItem sceneItem = objectHit.GetComponent<SceneItem>();
-                if (sceneItem)
-                {
-                    sceneItem.PickupItem(playerInventory);
-                }
-            }
-        }
-
-        // Inventory item selection.
-        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
-        {
-            // Wheel scrolls up.
-            playerInventory.ChangeSelectedItem(false);
-            Debug.Log(playerInventory.selectedItemIndex);
-        }
-        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
-        {
-            // Wheel scrolls down.
-            playerInventory.ChangeSelectedItem(true);
-            Debug.Log(playerInventory.selectedItemIndex);
-        }
-
-        // Dropping items.
-        if (Input.GetButtonDown("Fire2"))
-        {
-            if (playerInventory.items[playerInventory.selectedItemIndex])
-            {
-                playerInventory.items[playerInventory.selectedItemIndex].sceneObject.GetComponent<SceneItem>().DropItem(playerInventory, transform);
-            }
-        }
+        // Abilities.
+        AttemptItemPickup();
+        AttemptItemDisposal();
     }
 
     /* Moves the player based on axis inputs. */
@@ -96,9 +64,48 @@ public class FirstPersonController : MonoBehaviour
         playerCamera.transform.Rotate(-rotationY, 0, 0);
     }
 
-    /* Attempts to pickup */
-    private void PickupInteractable()
+    /* Handles item collection. */
+    private void AttemptItemPickup()
     {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100))
+            {
+                GameObject objectHit = hit.transform.gameObject;
+                SceneItem sceneItem = objectHit.GetComponent<SceneItem>();
+                if (sceneItem)
+                {
+                    sceneItem.PickupItem(playerInventory);
+                }
+            }
+        }
+    }
 
+    /* Handles dropping an item from a selected inventory slot. */
+    private void AttemptItemDisposal()
+    {
+        // Update selected item in inventory.
+        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
+        {
+            // Wheel scrolls up.
+            playerInventory.ChangeSelectedItem(false);
+            Debug.Log(playerInventory.selectedItemIndex);
+        }
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+        {
+            // Wheel scrolls down.
+            playerInventory.ChangeSelectedItem(true);
+            Debug.Log(playerInventory.selectedItemIndex);
+        }
+        else if (Input.GetButtonDown("Fire2"))
+        {
+            // Drop currently selected item.
+            Item itemToDrop = playerInventory.items[playerInventory.selectedItemIndex];
+            if (itemToDrop)
+            {
+                itemToDrop.sceneObject.GetComponent<SceneItem>().DropItem(playerInventory, transform.position, playerCamera.transform.forward);
+            }
+        }
     }
 }
