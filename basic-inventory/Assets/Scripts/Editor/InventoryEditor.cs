@@ -7,15 +7,18 @@ using UnityEditor;
 public class InventoryEditor : Editor
 {
     private SerializedProperty itemImagesProperty;
+    private SerializedProperty selectedImagesProperty;
     private SerializedProperty itemsProperty;
     private bool[] showItemSlots = new bool[Inventory.numItemSlots];
 
     private const string inventoryPropItemImagesName = "itemImages";
+    private const string inventoryPropSelectedImagesName = "selectedImages";
     private const string inventoryPropItemsName = "items";
 
     private void OnEnable()
     {
         itemImagesProperty = serializedObject.FindProperty(inventoryPropItemImagesName);
+        selectedImagesProperty = serializedObject.FindProperty(inventoryPropSelectedImagesName);
         itemsProperty = serializedObject.FindProperty(inventoryPropItemsName);
     }
 
@@ -40,6 +43,7 @@ public class InventoryEditor : Editor
         if (showItemSlots[index])
         {
             EditorGUILayout.PropertyField(itemImagesProperty.GetArrayElementAtIndex(index));
+            EditorGUILayout.PropertyField(selectedImagesProperty.GetArrayElementAtIndex(index));
             EditorGUILayout.PropertyField(itemsProperty.GetArrayElementAtIndex(index));
         }
 

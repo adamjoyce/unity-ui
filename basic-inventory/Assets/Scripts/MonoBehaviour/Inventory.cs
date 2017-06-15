@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     public Image[] itemImages = new Image[numItemSlots];            // The collection that store the inventory's item images.
+    public Image[] selectedImages = new Image[numItemSlots];        // The collection that stores each item slot's image idicating selection.
     public Item[] items = new Item[numItemSlots];                   // The collection that stores the inventory's items.
     public const int numItemSlots = 4;                              // The maximum number of items the inventory can store.
 
@@ -29,7 +30,7 @@ public class Inventory : MonoBehaviour
     }
 
     /* Removes an item from the inventory. */
-    public void RemoveItem(Item itemToRemove)
+    public void RemoveItem(Item itemToRemove, int index = -1)
     {
         for (int i = 0; i < items.Length; ++i)
         {
@@ -46,6 +47,7 @@ public class Inventory : MonoBehaviour
     /* Changes the currently selected item. */
     public void ChangeSelectedItem(bool increment)
     {
+        selectedImages[selectedItemIndex].enabled = false;
         if (increment)
         {
             if (selectedItemIndex < (numItemSlots - 1))
@@ -68,5 +70,6 @@ public class Inventory : MonoBehaviour
                 selectedItemIndex = numItemSlots - 1;
             }
         }
+        selectedImages[selectedItemIndex].enabled = true;
     }
 }
