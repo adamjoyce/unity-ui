@@ -90,13 +90,11 @@ public class FirstPersonController : MonoBehaviour
         {
             // Wheel scrolls up.
             playerInventory.ChangeSelectedItem(false);
-            Debug.Log(playerInventory.selectedItemIndex);
         }
         else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
         {
             // Wheel scrolls down.
             playerInventory.ChangeSelectedItem(true);
-            Debug.Log(playerInventory.selectedItemIndex);
         }
         else if (Input.GetButtonDown("Fire2"))
         {

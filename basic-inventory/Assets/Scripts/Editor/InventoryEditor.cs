@@ -9,17 +9,20 @@ public class InventoryEditor : Editor
     private SerializedProperty itemImagesProperty;
     private SerializedProperty selectedImagesProperty;
     private SerializedProperty itemsProperty;
+    private SerializedProperty itemCountTextProperty;
     private bool[] showItemSlots = new bool[Inventory.numItemSlots];
 
     private const string inventoryPropItemImagesName = "itemImages";
     private const string inventoryPropSelectedImagesName = "selectedImages";
     private const string inventoryPropItemsName = "items";
+    private const string inventoryPropItemCountTextName = "itemCountText";
 
     private void OnEnable()
     {
         itemImagesProperty = serializedObject.FindProperty(inventoryPropItemImagesName);
         selectedImagesProperty = serializedObject.FindProperty(inventoryPropSelectedImagesName);
         itemsProperty = serializedObject.FindProperty(inventoryPropItemsName);
+        itemCountTextProperty = serializedObject.FindProperty(inventoryPropItemCountTextName);
     }
 
     public override void OnInspectorGUI()
@@ -45,6 +48,7 @@ public class InventoryEditor : Editor
             EditorGUILayout.PropertyField(itemImagesProperty.GetArrayElementAtIndex(index));
             EditorGUILayout.PropertyField(selectedImagesProperty.GetArrayElementAtIndex(index));
             EditorGUILayout.PropertyField(itemsProperty.GetArrayElementAtIndex(index));
+            EditorGUILayout.PropertyField(itemCountTextProperty.GetArrayElementAtIndex(index));
         }
 
         EditorGUI.indentLevel--;

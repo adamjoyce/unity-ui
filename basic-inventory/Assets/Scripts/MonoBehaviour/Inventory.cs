@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     public Image[] itemImages = new Image[numItemSlots];            // The collection that store the inventory's item images.
     public Image[] selectedImages = new Image[numItemSlots];        // The collection that stores each item slot's image idicating selection.
     public Item[] items = new Item[numItemSlots];                   // The collection that stores the inventory's items.
+    public Text[] itemCountText = new Text[numItemSlots];           // The collection that stores the count number for each item in the inventory.
     public const int numItemSlots = 4;                              // The maximum number of items the inventory can store.
 
     public int selectedItemIndex = 0;                              // Index for the selected item.
@@ -16,21 +17,29 @@ public class Inventory : MonoBehaviour
      * Returns true if the item is successfully added. */
     public bool AddItem(Item itemToAdd)
     {
-        for (int i = 0; i < items.Length; ++i)
+        int itemDuplicateIndex = IsDuplicateItem(itemToAdd);
+        if (itemDuplicateIndex > -1)
         {
-            if (items[i] == null)
+            UpdateItemCount(itemDuplicateIndex);
+        }
+        else
+        {
+            for (int i = 0; i < items.Length; ++i)
             {
-                items[i] = itemToAdd;
-                itemImages[i].sprite = itemToAdd.sprite;
-                itemImages[i].enabled = true;
-                return true;
+                if (items[i] == null)
+                {
+                    items[i] = itemToAdd;
+                    itemImages[i].sprite = itemToAdd.sprite;
+                    itemImages[i].enabled = true;
+                    return true;
+                }
             }
         }
         return false;
     }
 
     /* Removes an item from the inventory. */
-    public void RemoveItem(Item itemToRemove, int index = -1)
+    public void RemoveItem(Item itemToRemove)
     {
         for (int i = 0; i < items.Length; ++i)
         {
@@ -71,5 +80,26 @@ public class Inventory : MonoBehaviour
             }
         }
         selectedImages[selectedItemIndex].enabled = true;
+    }
+
+    /* Returns the index of the duplicate item in the inventory
+     * or -1 if no duplicate exists. */
+    private int IsDuplicateItem(Item itemToAdd)
+    {
+        for (int i = 0; i < items.Length; ++i)
+        {
+            if (items[i] == itemToAdd)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /* Updates the item's count number. */
+    private void UpdateItemCount(int itemIndex)
+    {
+        items[itemIndex].count++;
+        itemCountText[itemIndex].text = "" + items[itemIndex].count;
     }
 }
