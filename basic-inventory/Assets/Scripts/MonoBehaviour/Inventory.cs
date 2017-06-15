@@ -20,7 +20,8 @@ public class Inventory : MonoBehaviour
         int itemDuplicateIndex = IsDuplicateItem(itemToAdd);
         if (itemDuplicateIndex > -1)
         {
-            UpdateItemCount(itemDuplicateIndex);
+            UpdateItemCount(itemDuplicateIndex, true);
+            return true;
         }
         else
         {
@@ -45,9 +46,17 @@ public class Inventory : MonoBehaviour
         {
             if (items[i] == itemToRemove)
             {
-                items[i] = null;
-                itemImages[i].sprite = null;
-                itemImages[i].enabled = false;
+                if (items[i].count > 1)
+                {
+                    UpdateItemCount(i, false);
+                }
+                else
+                {
+                    items[i] = null;
+                    itemImages[i].sprite = null;
+                    itemImages[i].enabled = false;
+                    itemCountText[i].enabled = false;
+                }
                 return;
             }
         }
@@ -97,9 +106,25 @@ public class Inventory : MonoBehaviour
     }
 
     /* Updates the item's count number. */
-    private void UpdateItemCount(int itemIndex)
+    private void UpdateItemCount(int itemIndex, bool increment)
     {
-        items[itemIndex].count++;
-        itemCountText[itemIndex].text = "" + items[itemIndex].count;
+        if (increment)
+        {
+            items[itemIndex].count++;
+        }
+        else
+        {
+            items[itemIndex].count--;
+        }
+
+        if (items[itemIndex].count > 1)
+        {
+            itemCountText[itemIndex].text = "" + items[itemIndex].count;
+            itemCountText[itemIndex].enabled = true;
+        }
+        else
+        {
+            itemCountText[itemIndex].enabled = false;
+        }
     }
 }
