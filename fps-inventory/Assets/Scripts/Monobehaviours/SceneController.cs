@@ -28,6 +28,43 @@ public class SceneController : MonoBehaviour
         StartCoroutine(Fade(0.0f));
     }
 
+    /* The external point of contact for scene transitions. */
+    public void FadeAndLoadScene(string sceneName)
+    {
+        if (!isFading)
+        {
+            StartCoroutine(FadeAndSwitchScenes(sceneName));
+        }
+    }
+
+    /* Handles a complete scene transition including any actions immediately before or after the change occurs. */
+    private IEnumerator FadeAndSwitchScenes(string sceneName)
+    {
+        // Fade to black and wait for it to complete before continuing.
+        yield return StartCoroutine(Fade(1.0f));
+
+        // Resolve any subscribed actions necessary before the current scene is unloaded.
+        if (BeforeSceneUnload != null)
+        {
+            BeforeSceneUnload();
+        }
+
+        // Unloads the active scene.
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
+        // Load the new scene and wait for it to complete before continuing.
+        LoadSceneAndSetActive(sceneName);
+
+        // Resolve any subscribed actions necessary immediately after a new scene is loaded.
+        if (AfterSceneLoad != null)
+        {
+            AfterSceneLoad();
+        }
+
+        // Fade the scene in and wait for it to complete before exiting the function.
+        yield return StartCoroutine(Fade(0.0f));
+    }
+
     /* Loads the given scene and sets it to be the new active scene within the SceneManager. */
     private IEnumerator LoadSceneAndSetActive(string sceneName)
     {
@@ -50,7 +87,7 @@ public class SceneController : MonoBehaviour
 
         // Fade between the current and final alpha values.
         float fadeSpeed = Mathf.Abs((faderCanvasGroup.alpha - finalAlpha) / fadeDuration);
-        while(!Mathf.Approximately(faderCanvasGroup.alpha, finalAlpha))
+        while (!Mathf.Approximately(faderCanvasGroup.alpha, finalAlpha))
         {
             // Work the canvs group alpha towards the final alpha.
             faderCanvasGroup.alpha = Mathf.MoveTowards(faderCanvasGroup.alpha, finalAlpha, fadeSpeed * Time.deltaTime);
